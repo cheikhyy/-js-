@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach Mbengue JS Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c0f;
+  --bg2: #0f1218;
+  --bg3: #141921;
+  --bg4: #1a2130;
+  --card: #111520;
+  --neon: #00ff88;
+  --neon2: #00c4ff;
+  --neon3: #ffcc00;
+  --accent: #ff5f57;
+  --text: #e8eaf0;
+  --text2: #8892a4;
+  --text3: #4a5568;
+  --border: #1e2a3a;
+  --border2: #243044;
+  --code-bg: #080b10;
+  --success: #00ff88;
+  --error: #ff5f57;
+  --warn: #ffcc00;
+  --r: 10px;
+  --r2: 16px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 3px; }
+
+/* ── HEADER ── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,12,15,0.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+
+.logo {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700; font-size: 1rem;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--neon), var(--neon2));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; font-weight: 700; color: #000;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 20px rgba(0,255,136,0.4);
+}
+.logo span { color: var(--neon); }
+
+.header-right {
+  display: flex; align-items: center; gap: 1rem;
+}
+
+.progress-global {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; color: var(--text2); font-family: 'JetBrains Mono', monospace;
+}
+.progress-bar-mini {
+  width: 120px; height: 4px;
+  background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.progress-fill-mini {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon), var(--neon2));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* ── LAYOUT ── */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 64px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: sticky; top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 1.5rem 0;
+}
+
+.sidebar-section { margin-bottom: 0.5rem; }
+
+.sidebar-label {
+  font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text3); padding: 0.4rem 1.5rem; font-family: 'JetBrains Mono', monospace;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text2);
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+  position: relative;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active {
+  color: var(--neon);
+  border-left-color: var(--neon);
+  background: rgba(0,255,136,0.05);
+}
+.nav-item.completed { color: var(--neon); }
+.nav-item .nav-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; color: var(--text3);
+  min-width: 20px;
+}
+.nav-item .check {
+  margin-left: auto;
+  color: var(--neon); font-size: 0.8rem;
+  opacity: 0; transition: opacity 0.2s;
+}
+.nav-item.completed .check { opacity: 1; }
+
+/* ── MAIN ── */
+main { padding: 3rem; max-width: 900px; }
+
+/* ── HERO ── */
+.hero {
+  margin-bottom: 4rem;
+  padding: 3rem;
+  background: linear-gradient(135deg, var(--card) 0%, var(--bg4) 100%);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,255,136,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,255,136,0.1);
+  border: 1px solid rgba(0,255,136,0.3);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 0.75rem; color: var(--neon);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-size: 2.8rem; font-weight: 800; line-height: 1.15;
+  margin-bottom: 1rem;
+}
+.hero h1 .hl { color: var(--neon); }
+.hero p { color: var(--text2); font-size: 1.05rem; max-width: 600px; margin-bottom: 2rem; }
+
+.hero-stats {
+  display: flex; gap: 2rem; flex-wrap: wrap;
+}
+.stat { text-align: center; }
+.stat-num { font-size: 1.8rem; font-weight: 800; color: var(--neon); font-family: 'Space Mono', monospace; }
+.stat-label { font-size: 0.75rem; color: var(--text2); }
+
+/* ── LESSON ── */
+.lesson { display: none; }
+.lesson.active { display: block; }
+
+.lesson-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.lesson-meta {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 1rem;
+}
+.lesson-num {
+  background: var(--neon); color: #000;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 0.75rem;
+  padding: 3px 10px; border-radius: 4px;
+}
+.lesson-tag {
+  font-size: 0.75rem; color: var(--neon2);
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(0,196,255,0.3);
+  padding: 2px 10px; border-radius: 4px;
+}
+.lesson-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+.lesson-desc { color: var(--text2); font-size: 1rem; }
+
+/* ── SECTIONS ── */
+.section { margin-bottom: 3rem; }
+.section-title {
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title::before {
+  content: '';
+  display: inline-block; width: 4px; height: 1.2rem;
+  background: var(--neon); border-radius: 2px;
+}
+
+p { color: var(--text2); margin-bottom: 1rem; line-height: 1.8; }
+strong { color: var(--text); }
+
+/* ── ÉTYMOLOGIE BOX ── */
+.etym-box {
+  background: linear-gradient(135deg, rgba(255,204,0,0.05), rgba(255,204,0,0.02));
+  border: 1px solid rgba(255,204,0,0.25);
+  border-left: 3px solid var(--neon3);
+  border-radius: var(--r);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.etym-box::before {
+  content: '📚 ORIGINE DU TERME';
+  display: block;
+  font-size: 0.65rem; letter-spacing: 0.12em;
+  color: var(--neon3); font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 0.5rem;
+}
+.etym-box p { color: var(--text2); margin: 0; font-size: 0.93rem; }
+.etym-box strong { color: var(--neon3); }
+
+/* ── INFO BOX ── */
+.info-box {
+  background: rgba(0,196,255,0.05);
+  border: 1px solid rgba(0,196,255,0.2);
+  border-left: 3px solid var(--neon2);
+  border-radius: var(--r);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.info-box::before {
+  content: '💡 À SAVOIR';
+  display: block;
+  font-size: 0.65rem; letter-spacing: 0.12em;
+  color: var(--neon2); font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 0.5rem;
+}
+.info-box p { color: var(--text2); margin: 0; font-size: 0.93rem; }
+
+/* ── WARN BOX ── */
+.warn-box {
+  background: rgba(255,95,87,0.05);
+  border: 1px solid rgba(255,95,87,0.2);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--r);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.warn-box::before {
+  content: '⚠️ ATTENTION';
+  display: block;
+  font-size: 0.65rem; letter-spacing: 0.12em;
+  color: var(--accent); font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 0.5rem;
+}
+.warn-box p { color: var(--text2); margin: 0; font-size: 0.93rem; }
+
+/* ── ANALOGIE BOX ── */
+.analogy-box {
+  background: rgba(0,255,136,0.04);
+  border: 1px solid rgba(0,255,136,0.2);
+  border-radius: var(--r);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.analogy-box::before {
+  content: '🌍 ANALOGIE DU MONDE RÉEL';
+  display: block;
+  font-size: 0.65rem; letter-spacing: 0.12em;
+  color: var(--neon); font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 0.5rem;
+}
+.analogy-box p { color: var(--text2); margin: 0; font-size: 0.93rem; }
+.analogy-box strong { color: var(--neon); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin: 1.5rem 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+.code-dots { display: flex; gap: 6px; }
+.code-dots span {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.code-dots span:nth-child(1) { background: #ff5f57; }
+.code-dots span:nth-child(2) { background: #febc2e; }
+.code-dots span:nth-child(3) { background: #28c840; }
+.code-filename { font-size: 0.75rem; color: var(--text3); }
+.copy-btn {
+  background: transparent; border: 1px solid var(--border2);
+  color: var(--text2); font-size: 0.72rem;
+  padding: 3px 10px; border-radius: 4px; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s;
+}
+.copy-btn:hover { border-color: var(--neon); color: var(--neon); }
+
+.code-content {
+  padding: 1.2rem 1.5rem;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+  color: #abb2bf;
+}
+
+/* Syntax colors */
+.k { color: #c678dd; } /* keyword */
+.s { color: #98c379; } /* string */
+.n { color: #e5c07b; } /* number */
+.f { color: #61afef; } /* function */
+.c { color: #5c6370; font-style: italic; } /* comment */
+.p { color: #abb2bf; } /* punctuation */
+.v { color: #e06c75; } /* variable */
+.m { color: #56b6c2; } /* method */
+.o { color: #d19a66; } /* object/dom */
+
+/* ── LIVE EDITOR ── */
+.live-editor {
+  background: var(--code-bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  overflow: hidden;
+  margin: 2rem 0;
+}
+.editor-tabs {
+  display: flex; align-items: center;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1rem;
+}
+.editor-tab {
+  padding: 0.7rem 1.2rem;
+  font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;
+  color: var(--text3); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.editor-tab.active { color: var(--neon); border-bottom-color: var(--neon); }
+
+.editor-body { display: flex; min-height: 200px; }
+.editor-pane { flex: 1; }
+textarea.editor-textarea {
+  width: 100%; height: 220px;
+  background: var(--code-bg);
+  border: none; outline: none;
+  color: var(--neon);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  padding: 1.2rem;
+  resize: vertical;
+  tab-size: 2;
+}
+.editor-result {
+  flex: 1;
+  border-left: 1px solid var(--border);
+  background: #fff;
+  min-height: 220px;
+  position: relative;
+}
+.editor-result iframe {
+  width: 100%; height: 100%; border: none; min-height: 220px;
+}
+.editor-actions {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.8rem 1.2rem;
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+}
+.run-btn {
+  background: var(--neon); color: #000;
+  border: none; border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 0.82rem; cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.run-btn:hover { background: #00e87a; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0,255,136,0.3); }
+.reset-btn {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: 6px; padding: 0.5rem 1rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.reset-btn:hover { border-color: var(--text2); color: var(--text); }
+.editor-hint { font-size: 0.75rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
+
+/* ── EXERCICE ── */
+.exercise-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  overflow: hidden;
+  margin: 2rem 0;
+}
+.exercise-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  background: linear-gradient(135deg, rgba(0,196,255,0.08), transparent);
+  border-bottom: 1px solid var(--border);
+}
+.exercise-title-wrap { display: flex; align-items: center; gap: 12px; }
+.exercise-icon {
+  width: 36px; height: 36px;
+  background: rgba(0,196,255,0.15);
+  border: 1px solid rgba(0,196,255,0.3);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.exercise-title { font-size: 1rem; font-weight: 700; }
+.exercise-subtitle { font-size: 0.8rem; color: var(--text2); margin-top: 2px; }
+.diff-badge {
+  font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;
+  padding: 3px 10px; border-radius: 20px;
+}
+.diff-easy { background: rgba(0,255,136,0.1); color: var(--neon); border: 1px solid rgba(0,255,136,0.3); }
+.diff-med { background: rgba(255,204,0,0.1); color: var(--neon3); border: 1px solid rgba(255,204,0,0.3); }
+
+.exercise-body { padding: 1.5rem; }
+.exercise-instructions { color: var(--text2); font-size: 0.93rem; margin-bottom: 1rem; }
+.exercise-instructions li { margin-left: 1.5rem; margin-bottom: 0.4rem; }
+
+textarea.exo-textarea {
+  width: 100%; height: 180px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--neon);
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+  line-height: 1.7; padding: 1rem; resize: vertical;
+  outline: none; tab-size: 2;
+  transition: border-color 0.2s;
+}
+textarea.exo-textarea:focus { border-color: var(--neon2); }
+
+.exo-actions { display: flex; gap: 0.8rem; margin-top: 1rem; align-items: center; }
+.show-solution-btn {
+  background: transparent; color: var(--neon3);
+  border: 1px solid rgba(255,204,0,0.3);
+  border-radius: 6px; padding: 0.5rem 1rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.show-solution-btn:hover { background: rgba(255,204,0,0.05); border-color: var(--neon3); }
+
+.solution-box {
+  display: none;
+  margin-top: 1.2rem;
+  background: rgba(0,255,136,0.03);
+  border: 1px solid rgba(0,255,136,0.2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.solution-box.open { display: block; }
+.solution-label {
+  padding: 0.6rem 1rem;
+  font-size: 0.68rem; letter-spacing: 0.12em;
+  color: var(--neon); font-family: 'JetBrains Mono', monospace;
+  background: rgba(0,255,136,0.05);
+  border-bottom: 1px solid rgba(0,255,136,0.15);
+}
+.solution-code {
+  padding: 1rem 1.2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.83rem; line-height: 1.7;
+  color: #abb2bf; white-space: pre; overflow-x: auto;
+}
+
+/* ── GLOSSAIRE ── */
+.glossary-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem; margin: 1.5rem 0;
+}
+.glossary-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1.2rem;
+  transition: border-color 0.2s;
+}
+.glossary-item:hover { border-color: var(--border2); }
+.glossary-term {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.92rem; color: var(--neon2);
+  margin-bottom: 0.4rem;
+}
+.glossary-origin {
+  font-size: 0.72rem; color: var(--neon3);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 0.5rem;
+}
+.glossary-def { font-size: 0.85rem; color: var(--text2); }
+
+/* ── ARCHITECTURE DIAGRAM ── */
+.arch-diagram {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 2rem;
+  margin: 1.5rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem; line-height: 1.9;
+  color: var(--text2);
+  overflow-x: auto; white-space: pre;
+}
+.arch-diagram .hl { color: var(--neon); }
+.arch-diagram .hl2 { color: var(--neon2); }
+.arch-diagram .hl3 { color: var(--neon3); }
+
+/* ── QUIZ ── */
+.quiz-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+.quiz-question { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; }
+.quiz-options { display: grid; gap: 0.6rem; }
+.quiz-option {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 0.8rem 1.2rem;
+  cursor: pointer; font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 10px;
+}
+.quiz-option:hover { border-color: var(--neon2); background: rgba(0,196,255,0.04); }
+.quiz-option.correct { border-color: var(--neon); background: rgba(0,255,136,0.07); color: var(--neon); }
+.quiz-option.wrong { border-color: var(--accent); background: rgba(255,95,87,0.07); color: var(--accent); }
+.quiz-opt-key {
+  width: 24px; height: 24px; border-radius: 4px;
+  background: var(--bg4); display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-family: 'JetBrains Mono', monospace;
+  color: var(--text3); flex-shrink: 0;
+}
+.quiz-feedback {
+  display: none; margin-top: 1rem;
+  padding: 0.8rem 1.2rem; border-radius: var(--r);
+  font-size: 0.88rem;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct { background: rgba(0,255,136,0.07); color: var(--neon); border: 1px solid rgba(0,255,136,0.2); }
+.quiz-feedback.wrong { background: rgba(255,95,87,0.07); color: var(--accent); border: 1px solid rgba(255,95,87,0.2); }
+
+/* ── PROGRESS BAR ── */
+.lesson-progress {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 3rem;
+}
+.progress-steps { display: flex; gap: 4px; }
+.progress-step {
+  height: 4px; border-radius: 2px;
+  background: var(--border);
+  transition: background 0.3s, width 0.3s;
+}
+.progress-step.done { background: var(--neon); }
+.progress-step.current { background: var(--neon2); }
+
+/* ── NEXT BTN ── */
+.lesson-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 3rem; padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.btn-next {
+  background: var(--neon); color: #000;
+  border: none; border-radius: 8px;
+  padding: 0.8rem 2rem;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,255,136,0.3); }
+.btn-prev {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: 8px; padding: 0.8rem 2rem;
+  font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-prev:hover { border-color: var(--text2); color: var(--text); }
+
+/* ── TYPE TABLE ── */
+.type-table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.83rem;
+}
+.type-table th {
+  background: var(--bg3);
+  padding: 0.7rem 1rem;
+  text-align: left; font-size: 0.7rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+.type-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+}
+.type-table tr:last-child td { border-bottom: none; }
+.type-table .td-type { color: var(--neon2); }
+.type-table .td-val { color: var(--neon); }
+.type-table .td-ex { color: var(--accent); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--neon); color: #000;
+  padding: 0.8rem 1.5rem; border-radius: var(--r);
+  font-weight: 700; font-size: 0.88rem;
+  transform: translateY(100px); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 999; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  main { padding: 1.5rem; }
+  .hero h1 { font-size: 1.8rem; }
+  .editor-body { flex-direction: column; }
+  .editor-result { min-height: 180px; border-left: none; border-top: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">JS</div>
+    <div>Coach Mbengue <span>Academy</span></div>
+  </div>
+  <div class="header-right">
+    <div class="progress-global">
+      <span id="progressText">0 / 7 leçons</span>
+      <div class="progress-bar-mini"><div class="progress-fill-mini" id="progressFill"></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Fondamentaux</div>
+    <div class="nav-item active" onclick="goLesson(0)" id="nav-0">
+      <span class="nav-num">01</span> Architecture JS & Web
+      <span class="check">✓</span>
+    </div>
+    <div class="nav-item" onclick="goLesson(1)" id="nav-1">
+      <span class="nav-num">02</span> Variables & Types
+      <span class="check">✓</span>
+    </div>
+    <div class="nav-item" onclick="goLesson(2)" id="nav-2">
+      <span class="nav-num">03</span> Fonctions
+      <span class="check">✓</span>
+    </div>
+    <div class="nav-item" onclick="goLesson(3)" id="nav-3">
+      <span class="nav-num">04</span> Tableaux & Objets
+      <span class="check">✓</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">DOM & Interactivité</div>
+    <div class="nav-item" onclick="goLesson(4)" id="nav-4">
+      <span class="nav-num">05</span> DOM — Sélectionner
+      <span class="check">✓</span>
+    </div>
+    <div class="nav-item" onclick="goLesson(5)" id="nav-5">
+      <span class="nav-num">06</span> DOM — Modifier & Créer
+      <span class="check">✓</span>
+    </div>
+    <div class="nav-item" onclick="goLesson(6)" id="nav-6">
+      <span class="nav-num">07</span> Événements & Projet Final
+      <span class="check">✓</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+
+<!-- ════════════════════ LEÇON 0 — HERO ════════════════════ -->
+<div class="lesson active" id="lesson-0">
+  <div class="hero">
+    <div class="hero-badge">🇸🇳 Dakar · Coach Mbengue JS Academy</div>
+    <h1>Maîtrise <span class="hl">JavaScript</span><br>& le DOM de zéro</h1>
+    <p>Un parcours complet, structuré et 100% pratique. Tu comprendras non seulement le code, mais aussi <strong>pourquoi les termes s'appellent comme ça</strong> et comment tout s'articule.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">7</div><div class="stat-label">Leçons</div></div>
+      <div class="stat"><div class="stat-num">25+</div><div class="stat-label">Exemples live</div></div>
+      <div class="stat"><div class="stat-num">20+</div><div class="stat-label">Exercices</div></div>
+      <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Pratique</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏗️ L'Architecture du Web — Ce que personne n'explique</div>
+    <p>Avant d'écrire une seule ligne de JavaScript, tu dois comprendre <strong>comment le navigateur fonctionne</strong>. C'est comme apprendre à conduire : tu dois savoir ce qu'il y a sous le capot.</p>
+
+    <div class="arch-diagram"><span class="hl">┌─────────────────────────────────────────────────────┐
+│                 TON NAVIGATEUR (Chrome, Firefox)    │
+│                                                     │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────┐  │
+│  │  <span class="hl2">HTML</span>        │  │  <span class="hl3">CSS</span>         │  │  <span class="hl">JS</span>       │  │
+│  │  Le squelette│  │  Le maquillage│  │  Le cerveau│  │
+│  │  de la page │  │  les couleurs │  │  l'action  │  │
+│  └──────┬──────┘  └──────┬───────┘  └─────┬─────┘  │
+│         │                │                │         │
+│         ▼                ▼                ▼         │
+│  ┌─────────────────────────────────────────────┐    │
+│  │             <span class="hl2">DOM</span> (Document Object Model)      │    │
+│  │   Représentation mémoire de toute la page   │    │
+│  │   C'est l'arbre que JavaScript manipule     │    │
+│  └─────────────────────────────────────────────┘    │
+│                        │                            │
+│                        ▼                            │
+│  ┌─────────────────────────────────────────────┐    │
+│  │         <span class="hl3">Moteur JavaScript (V8)</span>              │    │
+│  │   Lit et exécute ton code ligne par ligne   │    │
+│  └─────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────┘</span></div>
+
+    <div class="etym-box">
+      <p><strong>DOM</strong> = <strong>D</strong>ocument <strong>O</strong>bject <strong>M</strong>odel. Inventé par le W3C en 1998. <strong>Document</strong> = la page web. <strong>Object</strong> = représenté comme des objets en mémoire. <strong>Model</strong> = c'est un modèle (une représentation) — pas la vraie page, mais sa copie en mémoire que JS peut manipuler.</p>
+    </div>
+
+    <div class="analogy-box">
+      <p>Imagine une maison : <strong>HTML</strong> = les murs et la structure, <strong>CSS</strong> = la peinture et la déco, <strong>JavaScript</strong> = l'électricité et la domotique (lumières qui s'allument, portes qui s'ouvrent). Le <strong>DOM</strong> = le plan architectural que l'électricien consulte pour savoir où brancher quoi.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌐 Où vit JavaScript ?</div>
+    <p>JS peut tourner à deux endroits :</p>
+    <table class="type-table">
+      <tr><th>Endroit</th><th>Nom</th><th>Exemple</th></tr>
+      <tr><td class="td-type">Dans le navigateur</td><td>Frontend / Client-side</td><td class="td-val">Boutons, animations, formulaires</td></tr>
+      <tr><td class="td-type">Sur un serveur</td><td>Backend / Node.js</td><td class="td-val">Base de données, API, authentification</td></tr>
+    </table>
+    <div class="info-box"><p>Dans ce cours, on se concentre sur le <strong>JavaScript navigateur</strong> (frontend). C'est la base indispensable avant tout le reste.</p></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚡ Ton Premier Code JavaScript</div>
+    <p>Voici l'éditeur interactif. Tu peux modifier le code et cliquer <strong>▶ Exécuter</strong> pour voir le résultat en direct.</p>
+
+    <div class="live-editor">
+      <div class="editor-tabs">
+        <div class="editor-tab active">script.js</div>
+        <div class="editor-tab" style="color:var(--text3)">Résultat →</div>
+      </div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-0">// Ceci est un commentaire — le navigateur l'ignore
+// Le // sert à écrire des notes pour toi-même
+
+// alert() affiche une boîte de dialogue
+alert("Salam Dakar ! Je programme en JavaScript !");
+
+// console.log() affiche dans la console développeur
+console.log("Ce message est caché dans les DevTools");
+
+// Tu peux faire des maths
+console.log(2024 + 1);    // 2025
+console.log(100 / 4);     // 25
+console.log(7 % 3);       // 1 (reste de la division)</textarea>
+        </div>
+        <div class="editor-result">
+          <iframe id="result-0" sandbox="allow-scripts allow-modals"></iframe>
+        </div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-0','result-0','js')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-0', 0)">↺ Reset</button>
+        <span class="editor-hint">Ctrl+Enter pour exécuter</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <div></div>
+    <button class="btn-next" onclick="goLesson(1)">Variables & Types →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ LEÇON 1 — VARIABLES ════════════════════ -->
+<div class="lesson" id="lesson-1">
+  <div class="lesson-header">
+    <div class="lesson-meta">
+      <span class="lesson-num">LEÇON 02</span>
+      <span class="lesson-tag">variables · types · opérateurs</span>
+    </div>
+    <div class="lesson-title">Variables & Types de Données</div>
+    <div class="lesson-desc">Comprends comment JavaScript stocke et gère l'information en mémoire.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📦 C'est quoi une variable ?</div>
+    <p>Une variable, c'est <strong>une boîte avec un nom</strong> dans la mémoire de l'ordinateur. Tu mets quelque chose dedans, et tu peux le retrouver plus tard grâce à son nom.</p>
+
+    <div class="analogy-box">
+      <p>C'est comme les contacts dans ton téléphone. <strong>"Maman"</strong> est un nom (la variable) qui pointe vers un numéro (la valeur). Tu n'as pas besoin de mémoriser le numéro — tu utilises juste le nom.</p>
+    </div>
+
+    <div class="etym-box">
+      <p><strong>var</strong> = abréviation de <em>variable</em> (latin : <em>variabilis</em> = qui peut changer). <strong>let</strong> = mot anglais signifiant "laisser/permettre" → "laisse-moi appeler ça X". <strong>const</strong> = abréviation de <em>constant</em> (latin : <em>constare</em> = rester fixe) → une valeur qui ne change jamais.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-filename">variables.js</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+      </div>
+      <div class="code-content"><span class="c">// ── LET : Variable qui peut changer ──</span>
+<span class="k">let</span> <span class="v">prenom</span> = <span class="s">"Moussa"</span>;
+<span class="k">let</span> <span class="v">age</span> = <span class="n">20</span>;
+<span class="v">prenom</span> = <span class="s">"Fatou"</span>;  <span class="c">// ✅ on peut changer</span>
+<span class="v">age</span> = <span class="n">21</span>;        <span class="c">// ✅ ok</span>
+
+<span class="c">// ── CONST : Variable qui ne change PAS ──</span>
+<span class="k">const</span> <span class="v">pays</span> = <span class="s">"Sénégal"</span>;
+<span class="c">// pays = "Mali";  ❌ ERREUR ! const ne change pas</span>
+
+<span class="c">// ── VAR : L'ancien système (évite-le) ──</span>
+<span class="k">var</span> <span class="v">ancienStyle</span> = <span class="s">"déprécié"</span>;
+<span class="c">// var a des bugs de portée — utilise let/const</span>
+
+<span class="f">console</span>.<span class="m">log</span>(<span class="v">prenom</span>);  <span class="c">// "Fatou"</span>
+<span class="f">console</span>.<span class="m">log</span>(<span class="v">age</span>);     <span class="c">// 21</span>
+<span class="f">console</span>.<span class="m">log</span>(<span class="v">pays</span>);    <span class="c">// "Sénégal"</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 Les Types de Données</div>
+    <p>JavaScript a <strong>7 types primitifs</strong>. Comprends-les bien, ils sont la base de tout.</p>
+
+    <table class="type-table">
+      <tr>
+        <th>Type</th><th>Valeur exemple</th><th>Usage</th>
+      </tr>
+      <tr>
+        <td class="td-type">String</td>
+        <td class="td-val">"Dakar", 'salam'</td>
+        <td>Texte — toujours entre guillemets</td>
+      </tr>
+      <tr>
+        <td class="td-type">Number</td>
+        <td class="td-val">42, 3.14, -100</td>
+        <td>Nombres entiers et décimaux</td>
+      </tr>
+      <tr>
+        <td class="td-type">Boolean</td>
+        <td class="td-val">true, false</td>
+        <td>Oui/Non, Vrai/Faux</td>
+      </tr>
+      <tr>
+        <td class="td-type">null</td>
+        <td class="td-val">null</td>
+        <td>Vide intentionnel ("la boîte est vide exprès")</td>
+      </tr>
+      <tr>
+        <td class="td-type">undefined</td>
+        <td class="td-val">undefined</td>
+        <td>Pas encore défini ("la boîte n'a jamais été remplie")</td>
+      </tr>
+      <tr>
+        <td class="td-type">BigInt</td>
+        <td class="td-val">9007199254740991n</td>
+        <td>Très grands nombres</td>
+      </tr>
+      <tr>
+        <td class="td-type">Symbol</td>
+        <td class="td-val">Symbol('id')</td>
+        <td>Identifiant unique (avancé)</td>
+      </tr>
+    </table>
+
+    <div class="etym-box">
+      <p><strong>String</strong> = "chaîne" en anglais — une chaîne de caractères. <strong>Boolean</strong> = du nom de George <em>Boole</em> (1815-1864), mathématicien qui inventa la logique binaire (vrai/faux). <strong>null</strong> = latin <em>nullus</em> = "rien du tout". <strong>undefined</strong> = anglais "non défini" — JS n'a pas encore de valeur pour cette variable.</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">types.js</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-1">// Explore les types de données
+let nom = "Aminata";          // String
+let points = 95;              // Number
+let estEtudiant = true;       // Boolean
+let ecole = null;             // Null (pas encore d'école)
+let matiere;                  // Undefined (pas défini)
+
+// typeof retourne le TYPE d'une variable
+console.log(typeof nom);          // "string"
+console.log(typeof points);       // "number"
+console.log(typeof estEtudiant);  // "boolean"
+console.log(typeof ecole);        // "object" ← bug historique de JS !
+console.log(typeof matiere);      // "undefined"
+
+// Template literals — écrire du texte avec des variables
+// Utilise les backticks ` ` (Alt + 7)
+let message = `Salam ! Je m'appelle ${nom} et j'ai ${points} points.`;
+console.log(message);</textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-1" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-1','result-1','js')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-1', 1)">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔢 Conditions — if / else</div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-filename">conditions.js</span></div>
+      <div class="code-content"><span class="k">let</span> <span class="v">note</span> = <span class="n">14</span>;
+
+<span class="k">if</span> (<span class="v">note</span> >= <span class="n">16</span>) {
+  <span class="f">console</span>.<span class="m">log</span>(<span class="s">"Très bien ! 🏆"</span>);
+} <span class="k">else if</span> (<span class="v">note</span> >= <span class="n">12</span>) {
+  <span class="f">console</span>.<span class="m">log</span>(<span class="s">"Bien ! 👍"</span>);
+} <span class="k">else if</span> (<span class="v">note</span> >= <span class="n">10</span>) {
+  <span class="f">console</span>.<span class="m">log</span>(<span class="s">"Passable 😐"</span>);
+} <span class="k">else</span> {
+  <span class="f">console</span>.<span class="m">log</span>(<span class="s">"Insuffisant 📚"</span>);
+}
+
+<span class="c">// Opérateurs de comparaison</span>
+<span class="c">// ==  égal en VALEUR (évite-le)</span>
+<span class="c">// === égal en valeur ET en type (utilise toujours ça)</span>
+<span class="c">// !=  différent en valeur</span>
+<span class="c">// !   négation (NOT)</span>
+<span class="c">// &&  ET (AND) — les deux doivent être vrais</span>
+<span class="c">// ||  OU (OR)  — au moins un doit être vrai</span>
+
+<span class="f">console</span>.<span class="m">log</span>(<span class="n">5</span> == <span class="s">"5"</span>);   <span class="c">// true  ← DANGEREUX</span>
+<span class="f">console</span>.<span class="m">log</span>(<span class="n">5</span> === <span class="s">"5"</span>);  <span class="c">// false ← CORRECT</span></div>
+    </div>
+
+    <!-- EXERCICE 1 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <div class="exercise-title-wrap">
+          <div class="exercise-icon">✏️</div>
+          <div>
+            <div class="exercise-title">Exercice 1 — Calculateur de prix Wave</div>
+            <div class="exercise-subtitle">Pratique : variables + conditions</div>
+          </div>
+        </div>
+        <span class="diff-badge diff-easy">Facile</span>
+      </div>
+      <div class="exercise-body">
+        <p class="exercise-instructions">Crée un programme qui :</p>
+        <ul class="exercise-instructions">
+          <li>Stocke un montant (ex: 5000 FCFA) dans une variable</li>
+          <li>Si le montant est ≥ 10000, affiche "Gros transfert 💰"</li>
+          <li>Si le montant est entre 1000 et 9999, affiche "Transfert normal ✅"</li>
+          <li>Sinon, affiche "Petit montant 💵"</li>
+          <li>Affiche aussi : "Frais Wave : X FCFA" (les frais = 1% du montant)</li>
+        </ul>
+        <textarea class="exo-textarea" id="exo-1-code">// Ton code ici
+let montant = 5000;
+
+// À toi de jouer !
+</textarea>
+        <div class="exo-actions">
+          <button class="run-btn" onclick="runExo('exo-1-code', 'exo-1-result')">▶ Tester</button>
+          <button class="show-solution-btn" onclick="toggleSolution('sol-1')">💡 Voir la solution</button>
+        </div>
+        <div id="exo-1-result" style="margin-top:0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--neon); display:none; padding: 0.8rem; background:var(--code-bg); border-radius:6px;"></div>
+        <div class="solution-box" id="sol-1">
+          <div class="solution-label">✅ SOLUTION COMMENTÉE</div>
+          <div class="solution-code"><span class="k">let</span> montant = <span class="n">5000</span>;
+
+<span class="c">// Condition principale</span>
+<span class="k">if</span> (montant >= <span class="n">10000</span>) {
+  console.log(<span class="s">"Gros transfert 💰"</span>);
+} <span class="k">else if</span> (montant >= <span class="n">1000</span>) {
+  console.log(<span class="s">"Transfert normal ✅"</span>);
+} <span class="k">else</span> {
+  console.log(<span class="s">"Petit montant 💵"</span>);
+}
+
+<span class="c">// Calcul des frais (1% = diviser par 100)</span>
+<span class="k">let</span> frais = montant * <span class="n">0.01</span>;  <span class="c">// 0.01 = 1%</span>
+console.log(<span class="s">`Frais Wave : ${frais} FCFA`</span>);</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔁 Boucles — répéter du code</div>
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">boucles.js</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-2">// BOUCLE FOR — quand tu sais combien de fois
+// for (départ; condition pour continuer; incrément)
+for (let i = 1; i <= 5; i++) {
+  console.log(`Tour ${i} : Fière d'apprendre JS !`);
+}
+
+// BOUCLE WHILE — tant que la condition est vraie
+let compte = 10;
+while (compte > 0) {
+  console.log(`Décompte : ${compte}`);
+  compte -= 3;  // compte = compte - 3
+}
+
+// Afficher les nombres pairs de 0 à 10
+for (let n = 0; n <= 10; n++) {
+  if (n % 2 === 0) {
+    console.log(`${n} est pair`);
+  }
+}</textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-2" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-2','result-2','js')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-2', 2)">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="btn-prev" onclick="goLesson(0)">← Précédent</button>
+    <button class="btn-next" onclick="goLesson(2)">Fonctions →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ LEÇON 2 — FONCTIONS ════════════════════ -->
+<div class="lesson" id="lesson-2">
+  <div class="lesson-header">
+    <div class="lesson-meta">
+      <span class="lesson-num">LEÇON 03</span>
+      <span class="lesson-tag">functions · scope · arrow</span>
+    </div>
+    <div class="lesson-title">Les Fonctions — Le Cœur de JS</div>
+    <div class="lesson-desc">Une fonction = un bloc de code réutilisable avec un nom. C'est la clé de tout programme.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔧 Définir & appeler une fonction</div>
+
+    <div class="etym-box">
+      <p><strong>function</strong> = du latin <em>functio</em> = "accomplir une tâche". En maths, f(x) = 2x+1 est une fonction. En JS, c'est pareil : tu donnes un input, tu obtiens un output. <strong>return</strong> = "retourner" — la fonction te "rend" sa réponse. <strong>parameter</strong> = du grec <em>para</em> (à côté) + <em>metron</em> (mesure) = une valeur qui "mesure" ou configure la fonction.</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">fonctions.js</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-3">// ── DÉCLARATION de fonction ──
+function saluer(prenom) {
+  // prenom est un PARAMÈTRE (la "boîte" qui reçoit la valeur)
+  return `Salam ${prenom} ! Bienvenue à la JS Academy !`;
+}
+
+// ── APPEL de fonction ──
+// "Moussa" est un ARGUMENT (la vraie valeur qu'on envoie)
+let msg1 = saluer("Moussa");
+let msg2 = saluer("Fatou");
+console.log(msg1);  // Salam Moussa !...
+console.log(msg2);  // Salam Fatou !...
+
+// ── Fonction avec plusieurs paramètres ──
+function calculerTotalWave(montant, nbTransferts) {
+  let fraisParTransfert = montant * 0.01;
+  let totalFrais = fraisParTransfert * nbTransferts;
+  return `Total frais : ${totalFrais} FCFA pour ${nbTransferts} transferts`;
+}
+
+console.log(calculerTotalWave(10000, 3));
+
+// ── ARROW FUNCTION (fonction flèche) — style moderne ──
+const doubler = (n) => n * 2;
+const carre = (n) => n * n;
+
+console.log(doubler(7));   // 14
+console.log(carre(5));     // 25</textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-3" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-3','result-3','js')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-3', 3)">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="warn-box"><p>Une fonction sans <strong>return</strong> retourne <strong>undefined</strong>. Si tu oublies return, ton résultat sera perdu !</p></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 Portée des variables (Scope)</div>
+
+    <div class="etym-box">
+      <p><strong>scope</strong> = anglais "portée/champ d'action" (du latin <em>scopus</em> = but, cible). C'est la zone où une variable est "visible" et accessible. Une variable déclarée dans une fonction n'existe que dans cette fonction — elle n'est pas accessible dehors.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-filename">scope.js</span></div>
+      <div class="code-content"><span class="k">let</span> <span class="v">pays</span> = <span class="s">"Sénégal"</span>;  <span class="c">// Variable GLOBALE — visible partout</span>
+
+<span class="k">function</span> <span class="f">maFonction</span>() {
+  <span class="k">let</span> <span class="v">ville</span> = <span class="s">"Dakar"</span>;    <span class="c">// Variable LOCALE — visible seulement ici</span>
+  <span class="f">console</span>.<span class="m">log</span>(<span class="v">pays</span>);     <span class="c">// ✅ "Sénégal" — globale accessible</span>
+  <span class="f">console</span>.<span class="m">log</span>(<span class="v">ville</span>);    <span class="c">// ✅ "Dakar" — locale accessible ici</span>
+}
+
+<span class="f">maFonction</span>();
+<span class="f">console</span>.<span class="m">log</span>(<span class="v">pays</span>);     <span class="c">// ✅ "Sénégal"</span>
+<span class="c">// console.log(ville); ❌ ERREUR — ville n'existe pas ici !</span></div>
+    </div>
+
+    <!-- EXERCICE 2 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <div class="exercise-title-wrap">
+          <div class="exercise-icon">✏️</div>
+          <div>
+            <div class="exercise-title">Exercice 2 — Fonctions Orange Money</div>
+            <div class="exercise-subtitle">Pratique : fonctions + calculs</div>
+          </div>
+        </div>
+        <span class="diff-badge diff-easy">Facile</span>
+      </div>
+      <div class="exercise-body">
+        <p class="exercise-instructions">Crée ces 3 fonctions :</p>
+        <ul class="exercise-instructions">
+          <li><code>convertirEnEuros(fcfa)</code> — retourne le montant en € (1€ = 655 FCFA)</li>
+          <li><code>calculerFrais(montant)</code> — retourne 1.5% du montant</li>
+          <li><code>afficherBilan(nom, montant)</code> — affiche "Nom: X | Montant: Y FCFA | Frais: Z FCFA"</li>
+        </ul>
+        <textarea class="exo-textarea" id="exo-2-code">// Crée tes 3 fonctions ici
+
+// Test
+console.log(convertirEnEuros(10000)); // ~15.26
+afficherBilan("Mamadou", 25000);
+</textarea>
+        <div class="exo-actions">
+          <button class="run-btn" onclick="runExo('exo-2-code', 'exo-2-result')">▶ Tester</button>
+          <button class="show-solution-btn" onclick="toggleSolution('sol-2')">💡 Voir la solution</button>
+        </div>
+        <div id="exo-2-result" style="margin-top:0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--neon); display:none; padding: 0.8rem; background:var(--code-bg); border-radius:6px;"></div>
+        <div class="solution-box" id="sol-2">
+          <div class="solution-label">✅ SOLUTION</div>
+          <div class="solution-code">function convertirEnEuros(fcfa) {
+  return (fcfa / 655).toFixed(2);  // toFixed(2) = 2 décimales
+}
+
+function calculerFrais(montant) {
+  return montant * 0.015;  // 1.5%
+}
+
+function afficherBilan(nom, montant) {
+  let frais = calculerFrais(montant);
+  console.log(`Nom: ${nom} | Montant: ${montant} FCFA | Frais: ${frais} FCFA`);
+}
+
+// Tests
+console.log(convertirEnEuros(10000)); // "15.27"
+afficherBilan("Mamadou", 25000);      // Nom: Mamadou | Montant: 25000 | Frais: 375</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="btn-prev" onclick="goLesson(1)">← Précédent</button>
+    <button class="btn-next" onclick="goLesson(3)">Tableaux & Objets →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ LEÇON 3 — TABLEAUX & OBJETS ════════════════════ -->
+<div class="lesson" id="lesson-3">
+  <div class="lesson-header">
+    <div class="lesson-meta">
+      <span class="lesson-num">LEÇON 04</span>
+      <span class="lesson-tag">arrays · objects · méthodes</span>
+    </div>
+    <div class="lesson-title">Tableaux & Objets</div>
+    <div class="lesson-desc">Structurer et organiser des données complexes — la base de toute vraie application.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Les Tableaux (Arrays)</div>
+
+    <div class="etym-box">
+      <p><strong>Array</strong> = anglais "tableau/rangée" (du vieux français <em>areer</em> = ranger en ordre). En informatique, c'est une liste ordonnée d'éléments. <strong>Index</strong> = du latin <em>index</em> = "indicateur/pointeur" — le numéro de position d'un élément. Les indices commencent à <strong>0</strong> car c'est la convention en informatique (héritage du langage C, 1972).</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">arrays.js</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-4">// Créer un tableau
+let etudiants = ["Moussa", "Fatou", "Ibrahima", "Aminata"];
+
+// Accéder par index (commence à 0 !)
+console.log(etudiants[0]);   // "Moussa" (premier)
+console.log(etudiants[2]);   // "Ibrahima" (troisième)
+console.log(etudiants.length); // 4 (nombre d'éléments)
+
+// ── MÉTHODES des tableaux ──
+// .push() = ajouter à la FIN
+// ÉTYMOLOGIE: push = "pousser" en anglais — on "pousse" un élément à la fin
+etudiants.push("Oumar");
+console.log(etudiants);
+
+// .pop() = retirer le DERNIER
+// ÉTYMOLOGIE: pop = "faire sauter" — on "fait sauter" le dernier
+let dernier = etudiants.pop();
+console.log(dernier);  // "Oumar"
+
+// .includes() = est-ce que l'élément existe ?
+console.log(etudiants.includes("Fatou"));  // true
+
+// .forEach() = parcourir chaque élément
+// ÉTYMOLOGIE: for each = "pour chaque" en anglais
+etudiants.forEach((etudiant, index) => {
+  console.log(`${index + 1}. ${etudiant}`);
+});
+
+// .map() = transformer chaque élément en quelque chose de nouveau
+// ÉTYMOLOGIE: map = "cartographier/associer" — associe chaque élément à un nouveau
+let majuscules = etudiants.map(e => e.toUpperCase());
+console.log(majuscules);</textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-4" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-4','result-4','js')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-4', 4)">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🗂️ Les Objets (Objects)</div>
+
+    <div class="etym-box">
+      <p><strong>Object</strong> = du latin <em>objectum</em> = "chose placée devant". En programmation, un objet représente une <em>entité du monde réel</em> avec ses propriétés. <strong>Property</strong> = du latin <em>proprietas</em> = "ce qui appartient à". <strong>Method</strong> = du grec <em>methodos</em> = "chemin pour atteindre" — une fonction qui appartient à un objet.</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">objets.js</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-5">// Un objet = une "fiche d'identité" avec des propriétés
+const etudiant = {
+  nom: "Diallo",
+  prenom: "Mariama",
+  age: 22,
+  ville: "Thiès",
+  notes: [14, 16, 12, 18],
+  // Une méthode = une fonction dans un objet
+  calculerMoyenne: function() {
+    let total = this.notes.reduce((acc, n) => acc + n, 0);
+    // this = "moi-même" — l'objet lui-même
+    return total / this.notes.length;
+  }
+};
+
+// Accéder aux propriétés
+console.log(etudiant.nom);      // "Diallo"
+console.log(etudiant["age"]);   // 22 (autre syntaxe)
+
+// Modifier une propriété
+etudiant.ville = "Dakar";
+console.log(etudiant.ville);    // "Dakar"
+
+// Appeler une méthode
+console.log(etudiant.calculerMoyenne());  // 15
+
+// Object.keys() = liste les CLÉS de l'objet
+console.log(Object.keys(etudiant));
+
+// Tableau d'objets — la vraie structure d'une app !
+const classe = [
+  { nom: "Sow", note: 15 },
+  { nom: "Ndiaye", note: 18 },
+  { nom: "Fall", note: 11 }
+];
+
+classe.forEach(e => console.log(`${e.nom}: ${e.note}/20`));</textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-5" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-5','result-5','js')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-5', 5)">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- EXERCICE 3 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <div class="exercise-title-wrap">
+          <div class="exercise-icon">🏪</div>
+          <div>
+            <div class="exercise-title">Exercice 3 — Mini Boutique</div>
+            <div class="exercise-subtitle">Pratique : tableaux d'objets</div>
+          </div>
+        </div>
+        <span class="diff-badge diff-med">Moyen</span>
+      </div>
+      <div class="exercise-body">
+        <p class="exercise-instructions">Crée un tableau de 3 produits (chacun avec <code>nom</code>, <code>prix</code>, <code>stock</code>), puis :</p>
+        <ul class="exercise-instructions">
+          <li>Affiche chaque produit : "Nom: X | Prix: Y FCFA | Stock: Z"</li>
+          <li>Affiche le produit le plus cher</li>
+          <li>Calcule et affiche le prix total de tout le stock</li>
+        </ul>
+        <textarea class="exo-textarea" id="exo-3-code">// Crée ton catalogue ici
+const produits = [
+  // ... ajoute 3 produits
+];
+
+// Affichage
+// Produit le plus cher
+// Total stock
+</textarea>
+        <div class="exo-actions">
+          <button class="run-btn" onclick="runExo('exo-3-code', 'exo-3-result')">▶ Tester</button>
+          <button class="show-solution-btn" onclick="toggleSolution('sol-3')">💡 Voir la solution</button>
+        </div>
+        <div id="exo-3-result" style="margin-top:0.8rem; font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--neon); display:none; padding: 0.8rem; background:var(--code-bg); border-radius:6px;"></div>
+        <div class="solution-box" id="sol-3">
+          <div class="solution-label">✅ SOLUTION</div>
+          <div class="solution-code">const produits = [
+  { nom: "Téléphone", prix: 75000, stock: 5 },
+  { nom: "Écouteurs",  prix: 15000, stock: 10 },
+  { nom: "Chargeur",   prix: 8000,  stock: 20 }
+];
+
+// Affichage
+produits.forEach(p => {
+  console.log(`Nom: ${p.nom} | Prix: ${p.prix} FCFA | Stock: ${p.stock}`);
+});
+
+// Produit le plus cher
+let plusCher = produits[0];
+produits.forEach(p => {
+  if (p.prix > plusCher.prix) plusCher = p;
+});
+console.log(`Plus cher: ${plusCher.nom} (${plusCher.prix} FCFA)`);
+
+// Total stock
+let totalStock = produits.reduce((total, p) => total + (p.prix * p.stock), 0);
+console.log(`Valeur totale du stock: ${totalStock} FCFA`);</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="btn-prev" onclick="goLesson(2)">← Précédent</button>
+    <button class="btn-next" onclick="goLesson(4)">DOM — Sélectionner →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ LEÇON 4 — DOM SÉLECTION ════════════════════ -->
+<div class="lesson" id="lesson-4">
+  <div class="lesson-header">
+    <div class="lesson-meta">
+      <span class="lesson-num">LEÇON 05</span>
+      <span class="lesson-tag">DOM · querySelector · getElementById</span>
+    </div>
+    <div class="lesson-title">Le DOM — Sélectionner des Éléments</div>
+    <div class="lesson-desc">Apprends à cibler n'importe quel élément HTML avec JavaScript — la première étape pour rendre une page interactive.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌳 Le DOM — L'Arbre de ta Page</div>
+    <p>Quand le navigateur charge ton HTML, il crée en mémoire une <strong>structure en arbre</strong> appelée DOM. Chaque balise HTML devient un <strong>nœud</strong> dans cet arbre.</p>
+
+    <div class="arch-diagram"><span class="hl">document</span>  ← le point d'entrée TOUJOURS
+    └── <span class="hl2">html</span>
+         ├── <span class="hl2">head</span>
+         │    ├── title
+         │    └── link
+         └── <span class="hl2">body</span>
+              ├── <span class="hl3">header</span>
+              │    └── h1 : "Bienvenue"
+              ├── <span class="hl3">main</span>
+              │    ├── p : "Premier paragraphe"
+              │    └── button id="monBtn" : "Cliquer"
+              └── <span class="hl3">footer</span></div>
+
+    <div class="etym-box">
+      <p><strong>document</strong> = l'objet global représentant toute la page HTML. C'est toujours le point de départ pour accéder au DOM. <strong>querySelector</strong> = <em>query</em> (requête/chercher) + <em>Selector</em> (sélecteur CSS) → "cherche avec un sélecteur CSS". <strong>getElementById</strong> = <em>get</em> (obtenir) + <em>Element</em> (élément) + <em>By</em> (par) + <em>Id</em> (identifiant) → "obtenir l'élément par son ID". Les noms en JS sont souvent de l'anglais condensé qui décrit exactement ce que fait la méthode.</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">HTML + JS</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-6" style="height:280px;"><!DOCTYPE html>
+<html>
+<body>
+  <h1 id="titre">Salam !</h1>
+  <p class="intro">Premier paragraphe</p>
+  <p class="intro">Deuxième paragraphe</p>
+  <button id="monBouton">Clique moi</button>
+
+  <script>
+  // ── Sélectionner UN élément par ID ──
+  let titre = document.getElementById("titre");
+  console.log(titre.textContent);  // "Salam !"
+
+  // ── Sélectionner par sélecteur CSS (le plus puissant) ──
+  let bouton = document.querySelector("#monBouton");
+  let premierP = document.querySelector(".intro");
+  let h1 = document.querySelector("h1");
+
+  // ── Sélectionner TOUS les éléments (NodeList) ──
+  let tousLesP = document.querySelectorAll(".intro");
+  console.log(tousLesP.length);  // 2
+
+  tousLesP.forEach(p => {
+    console.log(p.textContent);
+  });
+  </script>
+</body>
+</html></textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-6" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-6','result-6','html')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-6', 6)">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:2rem;">🗺️ Guide des Sélecteurs</div>
+
+    <div class="glossary-grid">
+      <div class="glossary-item">
+        <div class="glossary-term">getElementById("id")</div>
+        <div class="glossary-origin">get + Element + By + Id</div>
+        <div class="glossary-def">Sélectionne l'élément avec l'attribut <code>id="id"</code>. Le plus rapide.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">querySelector("css")</div>
+        <div class="glossary-origin">query + Selector = chercher avec sélecteur</div>
+        <div class="glossary-def">Sélectionne le <strong>premier</strong> élément correspondant. Utilise la syntaxe CSS.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">querySelectorAll("css")</div>
+        <div class="glossary-origin">query + Selector + All = tous</div>
+        <div class="glossary-def">Sélectionne <strong>tous</strong> les éléments. Retourne une NodeList.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">getElementsByClassName("cls")</div>
+        <div class="glossary-origin">get + Elements + By + ClassName</div>
+        <div class="glossary-def">Ancienne méthode. Préfère <code>querySelectorAll(".cls")</code>.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.textContent</div>
+        <div class="glossary-origin">text + Content = contenu textuel</div>
+        <div class="glossary-def">Le texte brut d'un élément. Ignore les balises HTML.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.innerHTML</div>
+        <div class="glossary-origin">inner + HTML = HTML intérieur</div>
+        <div class="glossary-def">Le contenu HTML à l'intérieur d'un élément. Peut inclure des balises.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="btn-prev" onclick="goLesson(3)">← Précédent</button>
+    <button class="btn-next" onclick="goLesson(5)">DOM — Modifier →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ LEÇON 5 — DOM MODIFIER ════════════════════ -->
+<div class="lesson" id="lesson-5">
+  <div class="lesson-header">
+    <div class="lesson-meta">
+      <span class="lesson-num">LEÇON 06</span>
+      <span class="lesson-tag">.append · createElement · classList · style</span>
+    </div>
+    <div class="lesson-title">DOM — Modifier & Créer des Éléments</div>
+    <div class="lesson-desc">Tu sais sélectionner — maintenant tu vas modifier, créer et supprimer des éléments en temps réel.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">✏️ Modifier du contenu</div>
+
+    <div class="etym-box">
+      <p><strong>.textContent</strong> = <em>text</em> + <em>Content</em> → modifie le texte brut. <strong>.innerHTML</strong> = <em>inner</em> (intérieur) + <em>HTML</em> → modifie le HTML à l'intérieur. <strong>.style</strong> = accède aux styles CSS inline. <strong>.classList</strong> = <em>class</em> + <em>List</em> → la liste des classes CSS de l'élément. <strong>.setAttribute</strong> = <em>set</em> (définir) + <em>Attribute</em> (attribut) → définit un attribut HTML comme <code>src</code>, <code>href</code>, <code>alt</code>.</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">modifier-dom.html</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-7" style="height:300px;"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  .surligné { background: yellow; padding: 2px 5px; border-radius: 3px; }
+  .rouge { color: red; font-weight: bold; }
+  .vert { color: green; }
+</style>
+</head>
+<body>
+  <h2 id="titre">Texte original</h2>
+  <p id="para">Bonjour tout le monde</p>
+  <div id="boite" style="width:100px;height:100px;background:blue;"></div>
+
+  <script>
+  let titre = document.getElementById("titre");
+  let para = document.getElementById("para");
+  let boite = document.getElementById("boite");
+
+  // Changer le texte
+  titre.textContent = "Titre modifié par JS ! ✅";
+
+  // Changer le HTML intérieur
+  para.innerHTML = "Je suis <strong>important</strong> et <em>stylé</em>";
+
+  // Changer les styles CSS
+  boite.style.background = "linear-gradient(135deg, #00ff88, #00c4ff)";
+  boite.style.borderRadius = "10px";
+  boite.style.width = "150px";
+
+  // Manipuler les classes CSS
+  para.classList.add("surligné");      // ajouter
+  // para.classList.remove("surligné"); // retirer
+  // para.classList.toggle("rouge");    // alterner
+
+  // Changer un attribut
+  // img.setAttribute("src", "photo.jpg");
+  // lien.setAttribute("href", "https://google.com");
+  </script>
+</body>
+</html></textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-7" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-7','result-7','html')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-7', 7)">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏗️ Créer des éléments — .createElement & .append</div>
+
+    <div class="etym-box">
+      <p><strong>createElement</strong> = <em>create</em> (créer) + <em>Element</em> (élément HTML) → fabrique un nouvel élément HTML en mémoire. <strong>append</strong> = du latin <em>appendere</em> = "accrocher à, attacher à" → accroche l'élément créé à l'intérieur d'un parent. <strong>appendChild</strong> = <em>append</em> + <em>Child</em> (enfant) → ancienne méthode. <strong>prepend</strong> = <em>pre</em> (avant) + <em>pend</em> (latin : accrocher) → attache au début plutôt qu'à la fin. C'est toute une famille de méthodes qui "accrochent" des éléments à différents endroits !</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">creer-elements.html</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-8" style="height:320px;"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: sans-serif; padding: 15px; }
+  .carte { background: #f0f0f0; padding: 12px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #00c4ff; }
+  .carte h3 { margin: 0 0 5px; color: #333; }
+  .carte p { margin: 0; color: #666; font-size: 0.9em; }
+  ul#liste { padding-left: 20px; }
+  ul#liste li { margin: 5px 0; }
+</style>
+</head>
+<body>
+  <h2>Étudiants GoMyCode</h2>
+  <div id="conteneur"></div>
+  <ul id="liste"></ul>
+
+  <script>
+  // Données (comme une vraie API)
+  const etudiants = [
+    { nom: "Moussa Diallo", ville: "Dakar" },
+    { nom: "Fatou Sow", ville: "Thiès" },
+    { nom: "Ibrahima Fall", ville: "Saint-Louis" }
+  ];
+
+  const conteneur = document.getElementById("conteneur");
+  const liste = document.getElementById("liste");
+
+  // Pour chaque étudiant, créer une carte
+  etudiants.forEach(etudiant => {
+    // 1. Créer l'élément div
+    let carte = document.createElement("div");
+    // 2. Lui donner une classe
+    carte.classList.add("carte");
+    // 3. Remplir son contenu HTML
+    carte.innerHTML = `
+      <h3>${etudiant.nom}</h3>
+      <p>📍 ${etudiant.ville}</p>
+    `;
+    // 4. L'ACCROCHER dans la page (append = accrocher à la fin)
+    conteneur.append(carte);
+
+    // Créer aussi un item de liste
+    let li = document.createElement("li");
+    li.textContent = etudiant.nom;
+    liste.append(li);
+  });
+  </script>
+</body>
+</html></textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-8" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-8','result-8','html')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-8', 8)">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- EXERCICE 4 -->
+    <div class="exercise-card">
+      <div class="exercise-header">
+        <div class="exercise-title-wrap">
+          <div class="exercise-icon">🏗️</div>
+          <div>
+            <div class="exercise-title">Exercice 4 — Catalogue de Produits</div>
+            <div class="exercise-subtitle">DOM : créer des cartes dynamiquement</div>
+          </div>
+        </div>
+        <span class="diff-badge diff-med">Moyen</span>
+      </div>
+      <div class="exercise-body">
+        <p class="exercise-instructions">Utilise le DOM pour :</p>
+        <ul class="exercise-instructions">
+          <li>Partir d'un tableau de 3 produits (nom + prix en FCFA)</li>
+          <li>Créer un div pour chaque produit et l'ajouter dans <code>#catalogue</code></li>
+          <li>Chaque carte doit afficher le nom et le prix formaté</li>
+        </ul>
+        <textarea class="exo-textarea" id="exo-4-code"><!DOCTYPE html>
+<html>
+<body>
+  <h2>Mon Catalogue</h2>
+  <div id="catalogue"></div>
+
+  <script>
+  const produits = [
+    { nom: "iPhone 15", prix: 450000 },
+    { nom: "AirPods", prix: 95000 },
+    { nom: "Coque", prix: 5000 }
+  ];
+
+  // Ton code ici : crée une carte par produit
+  // et append dans #catalogue
+
+  </script>
+</body>
+</html></textarea>
+        <div class="exo-actions">
+          <button class="run-btn" onclick="runExo('exo-4-code', 'exo-4-result', true)">▶ Tester</button>
+          <button class="show-solution-btn" onclick="toggleSolution('sol-4')">💡 Voir la solution</button>
+        </div>
+        <div id="exo-4-result" style="margin-top:0.8rem; height:150px; border:1px solid var(--border); border-radius:6px; display:none;"><iframe style="width:100%;height:100%;border:none;" id="exo-4-iframe"></iframe></div>
+        <div class="solution-box" id="sol-4">
+          <div class="solution-label">✅ SOLUTION</div>
+          <div class="solution-code">const catalogue = document.getElementById("catalogue");
+
+produits.forEach(produit => {
+  let carte = document.createElement("div");
+  carte.style.cssText = "background:#f5f5f5;padding:12px;margin:8px 0;border-radius:8px;";
+  carte.innerHTML = `
+    &lt;h3&gt;${produit.nom}&lt;/h3&gt;
+    &lt;p&gt;Prix : ${produit.prix.toLocaleString()} FCFA&lt;/p&gt;
+  `;
+  catalogue.append(carte);  // ← append ACCROCHE l'élément à la fin
+});</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="btn-prev" onclick="goLesson(4)">← Précédent</button>
+    <button class="btn-next" onclick="goLesson(6)">Événements & Projet Final →</button>
+  </div>
+</div>
+
+<!-- ════════════════════ LEÇON 6 — ÉVÉNEMENTS & PROJET ════════════════════ -->
+<div class="lesson" id="lesson-6">
+  <div class="lesson-header">
+    <div class="lesson-meta">
+      <span class="lesson-num">LEÇON 07</span>
+      <span class="lesson-tag">events · addEventListener · projet final</span>
+    </div>
+    <div class="lesson-title">Événements & Projet Final</div>
+    <div class="lesson-desc">Les événements sont le cœur de l'interactivité. Puis tu construis une vraie mini-application.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚡ Les Événements</div>
+
+    <div class="etym-box">
+      <p><strong>event</strong> = du latin <em>eventus</em> = "ce qui arrive, ce qui se produit". Un événement en JS = quelque chose qui se produit dans la page (clic, frappe clavier, souris qui bouge). <strong>addEventListener</strong> = <em>add</em> (ajouter) + <em>Event</em> (événement) + <em>Listener</em> (écouteur) → "ajouter un écouteur d'événement". Comme un vigile à la porte : il <em>écoute</em> et réagit quand quelque chose se passe. <strong>callback</strong> = <em>call back</em> = "rappeler" — une fonction qu'on donne à une autre fonction pour qu'elle la "rappelle" plus tard quand l'événement se produit.</p>
+    </div>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">evenements.html</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-9" style="height:350px;"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+  #btn1 { background: #00c4ff; color: white; }
+  #btn2 { background: #ff5f57; color: white; }
+  #zone { padding: 15px; background: #f0f0f0; border-radius: 8px; margin-top: 10px; }
+  input { padding: 8px; font-size: 1rem; border: 2px solid #ccc; border-radius: 6px; width: 200px; }
+  input:focus { border-color: #00c4ff; outline: none; }
+</style>
+</head>
+<body>
+  <h2>Lab Événements</h2>
+  <button id="btn1">Cliquer ici</button>
+  <button id="btn2">Changer couleur</button>
+  <p>Tape quelque chose : <input type="text" id="champTexte"></p>
+  <div id="zone">Le résultat apparaîtra ici...</div>
+
+  <script>
+  let compteur = 0;
+  const zone = document.getElementById("zone");
+
+  // Événement CLICK
+  document.getElementById("btn1").addEventListener("click", function() {
+    compteur++;
+    zone.textContent = `Cliqué ${compteur} fois !`;
+  });
+
+  // Événement CLICK avec arrow function
+  document.getElementById("btn2").addEventListener("click", () => {
+    zone.style.background = `hsl(${Math.random() * 360}, 70%, 85%)`;
+    zone.textContent = "Couleur changée ! 🎨";
+  });
+
+  // Événement INPUT — réagit à chaque frappe clavier
+  document.getElementById("champTexte").addEventListener("input", (event) => {
+    // event.target = l'élément qui a déclenché l'événement
+    let texte = event.target.value;
+    zone.textContent = `Tu tapes : "${texte}" (${texte.length} caractères)`;
+  });
+
+  // Événement MOUSEOVER — survol de souris
+  zone.addEventListener("mouseover", () => {
+    zone.style.transform = "scale(1.02)";
+    zone.style.transition = "transform 0.2s";
+  });
+  zone.addEventListener("mouseout", () => {
+    zone.style.transform = "scale(1)";
+  });
+  </script>
+</body>
+</html></textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-9" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-9','result-9','html')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetEditor('editor-9', 9)">↺ Reset</button>
+      </div>
+    </div>
+
+    <table class="type-table">
+      <tr><th>Événement</th><th>Quand ?</th><th>Usage typique</th></tr>
+      <tr><td class="td-type">click</td><td>Clic de souris / tap</td><td class="td-val">Boutons, liens</td></tr>
+      <tr><td class="td-type">input</td><td>À chaque frappe dans un champ</td><td class="td-val">Recherche en temps réel</td></tr>
+      <tr><td class="td-type">submit</td><td>Soumission d'un formulaire</td><td class="td-val">Formulaires de contact</td></tr>
+      <tr><td class="td-type">mouseover</td><td>Souris entre dans un élément</td><td class="td-val">Effets hover</td></tr>
+      <tr><td class="td-type">keydown</td><td>Touche du clavier pressée</td><td class="td-val">Raccourcis clavier</td></tr>
+      <tr><td class="td-type">DOMContentLoaded</td><td>Page entièrement chargée</td><td class="td-val">Initialisation de l'app</td></tr>
+    </table>
+  </div>
+
+  <!-- PROJET FINAL -->
+  <div class="section">
+    <div class="section-title">🚀 PROJET FINAL — Liste de Tâches (Todo App)</div>
+    <p>On construit une vraie mini-application qui combine <strong>tout</strong> ce qu'on a appris : variables, fonctions, tableaux, DOM, événements.</p>
+
+    <div class="live-editor">
+      <div class="editor-tabs"><div class="editor-tab active">todo-app.html — Projet Complet</div><div class="editor-tab" style="color:var(--text3)">Résultat →</div></div>
+      <div class="editor-body">
+        <div class="editor-pane">
+<textarea class="editor-textarea" id="editor-10" style="height:420px;"><!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; padding: 30px; min-height: 100vh; }
+  .app { max-width: 500px; margin: 0 auto; }
+  h1 { font-size: 1.8rem; margin-bottom: 5px; }
+  .subtitle { color: #64748b; font-size: 0.9rem; margin-bottom: 25px; }
+  .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  input[type="text"] { flex: 1; padding: 12px 16px; background: #1e293b; border: 1px solid #334155; border-radius: 10px; color: #e2e8f0; font-size: 1rem; outline: none; }
+  input[type="text"]:focus { border-color: #00c4ff; }
+  input::placeholder { color: #475569; }
+  .btn-add { background: #00c4ff; color: #000; border: none; border-radius: 10px; padding: 12px 20px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+  .btn-add:hover { background: #38bdf8; }
+  .stats { display: flex; gap: 15px; margin-bottom: 15px; font-size: 0.8rem; color: #64748b; }
+  .stat-pill { background: #1e293b; padding: 4px 12px; border-radius: 20px; }
+  .task-list { list-style: none; }
+  .task-item { display: flex; align-items: center; gap: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; transition: all 0.2s; }
+  .task-item:hover { border-color: #475569; }
+  .task-item.done { opacity: 0.5; }
+  .task-item.done .task-text { text-decoration: line-through; color: #475569; }
+  .task-checkbox { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #475569; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .task-checkbox.checked { background: #00ff88; border-color: #00ff88; color: #000; font-size: 0.8rem; }
+  .task-text { flex: 1; font-size: 0.95rem; }
+  .btn-delete { background: none; border: none; color: #475569; cursor: pointer; font-size: 1.1rem; padding: 2px 6px; border-radius: 4px; }
+  .btn-delete:hover { color: #ff5f57; background: rgba(255,95,87,0.1); }
+  .empty { text-align: center; color: #475569; padding: 30px; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>📋 Ma Todo List</h1>
+  <p class="subtitle">Coach Mbengue JS Academy — Projet Final</p>
+
+  <div class="input-row">
+    <input type="text" id="champTache" placeholder="Ajouter une tâche...">
+    <button class="btn-add" id="btnAjouter">+ Ajouter</button>
+  </div>
+
+  <div class="stats">
+    <span class="stat-pill" id="statTotal">0 tâches</span>
+    <span class="stat-pill" id="statDone">0 terminées</span>
+  </div>
+
+  <ul class="task-list" id="listeTaches"></ul>
+  <p class="empty" id="msgVide">Aucune tâche. Commence par en ajouter une !</p>
+</div>
+
+<script>
+// ── ÉTAT de l'application (les données) ──
+let taches = [];
+let idCounter = 0;
+
+// ── RÉFÉRENCES DOM ──
+const champ = document.getElementById("champTache");
+const btnAjouter = document.getElementById("btnAjouter");
+const listeTaches = document.getElementById("listeTaches");
+const statTotal = document.getElementById("statTotal");
+const statDone = document.getElementById("statDone");
+const msgVide = document.getElementById("msgVide");
+
+// ── FONCTIONS ──
+
+function ajouterTache() {
+  let texte = champ.value.trim(); // trim() retire les espaces
+  if (texte === "") return;       // Si vide, on arrête
+
+  let nouvelleTache = {
+    id: idCounter++,
+    texte: texte,
+    faite: false
+  };
+
+  taches.push(nouvelleTache);
+  champ.value = "";     // Vider le champ
+  afficherTaches();     // Mettre à jour l'affichage
+}
+
+function toggleTache(id) {
+  let tache = taches.find(t => t.id === id);
+  if (tache) tache.faite = !tache.faite;
+  afficherTaches();
+}
+
+function supprimerTache(id) {
+  taches = taches.filter(t => t.id !== id);
+  afficherTaches();
+}
+
+function afficherTaches() {
+  listeTaches.innerHTML = "";  // Vider la liste
+  msgVide.style.display = taches.length === 0 ? "block" : "none";
+
+  taches.forEach(tache => {
+    let li = document.createElement("li");
+    li.classList.add("task-item");
+    if (tache.faite) li.classList.add("done");
+
+    li.innerHTML = `
+      <div class="task-checkbox ${tache.faite ? 'checked' : ''}"
+           onclick="toggleTache(${tache.id})">
+        ${tache.faite ? '✓' : ''}
+      </div>
+      <span class="task-text">${tache.texte}</span>
+      <button class="btn-delete" onclick="supprimerTache(${tache.id})">🗑</button>
+    `;
+
+    listeTaches.append(li);
+  });
+
+  // Mettre à jour les stats
+  let nbFaites = taches.filter(t => t.faite).length;
+  statTotal.textContent = `${taches.length} tâche${taches.length !== 1 ? 's' : ''}`;
+  statDone.textContent = `${nbFaites} terminée${nbFaites !== 1 ? 's' : ''}`;
+}
+
+// ── ÉVÉNEMENTS ──
+btnAjouter.addEventListener("click", ajouterTache);
+
+// Ajouter avec la touche Entrée
+champ.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") ajouterTache();
+});
+
+// Tâches initiales pour demo
+taches = [
+  { id: idCounter++, texte: "Apprendre JavaScript", faite: true },
+  { id: idCounter++, texte: "Maîtriser le DOM", faite: false },
+  { id: idCounter++, texte: "Construire un projet", faite: false }
+];
+afficherTaches();
+</script>
+</body>
+</html></textarea>
+        </div>
+        <div class="editor-result"><iframe id="result-10" sandbox="allow-scripts allow-modals"></iframe></div>
+      </div>
+      <div class="editor-actions">
+        <button class="run-btn" onclick="runEditor('editor-10','result-10','html')">▶ Lancer l'App</button>
+        <button class="reset-btn" onclick="resetEditor('editor-10', 10)">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOSSAIRE FINAL -->
+  <div class="section">
+    <div class="section-title">📚 Glossaire Complet — Origines des Termes</div>
+    <div class="glossary-grid">
+      <div class="glossary-item">
+        <div class="glossary-term">.append()</div>
+        <div class="glossary-origin">latin : appendere = accrocher à</div>
+        <div class="glossary-def">Accroche un élément à la FIN d'un parent dans le DOM.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.prepend()</div>
+        <div class="glossary-origin">pre (avant) + pendere (accrocher)</div>
+        <div class="glossary-def">Accroche un élément au DÉBUT d'un parent.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.push()</div>
+        <div class="glossary-origin">anglais : pousser</div>
+        <div class="glossary-def">Pousse/ajoute un élément à la fin d'un tableau.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.pop()</div>
+        <div class="glossary-origin">anglais : faire sauter</div>
+        <div class="glossary-def">Retire et retourne le dernier élément d'un tableau.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.filter()</div>
+        <div class="glossary-origin">latin : filtrare = passer à travers un filtre</div>
+        <div class="glossary-def">Retourne un nouveau tableau avec seulement les éléments qui passent le test.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.map()</div>
+        <div class="glossary-origin">cartographier = associer chaque point à un autre</div>
+        <div class="glossary-def">Transforme chaque élément du tableau en quelque chose de nouveau.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.reduce()</div>
+        <div class="glossary-origin">latin : reducere = ramener à</div>
+        <div class="glossary-def">Réduit un tableau à une seule valeur (somme, objet, etc.).</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.find()</div>
+        <div class="glossary-origin">anglais : trouver</div>
+        <div class="glossary-def">Trouve et retourne le PREMIER élément qui satisfait la condition.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.trim()</div>
+        <div class="glossary-origin">anglais : tailler/couper</div>
+        <div class="glossary-def">Coupe les espaces au début et à la fin d'une chaîne.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">.classList</div>
+        <div class="glossary-origin">class + List = liste de classes</div>
+        <div class="glossary-def">La liste de toutes les classes CSS d'un élément HTML.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">addEventListener</div>
+        <div class="glossary-origin">add + Event + Listener = ajouter un écouteur</div>
+        <div class="glossary-def">Attache une fonction "écouteur" qui réagit à un événement.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">callback</div>
+        <div class="glossary-origin">call back = rappeler</div>
+        <div class="glossary-def">Fonction passée en argument à une autre, exécutée plus tard.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="text-align:center; padding:2rem; background:linear-gradient(135deg,rgba(0,255,136,0.05),rgba(0,196,255,0.05)); border:1px solid var(--border2); border-radius:var(--r2);">
+    <div style="font-size:3rem; margin-bottom:1rem;">🏆</div>
+    <div style="font-size:1.5rem; font-weight:800; margin-bottom:0.5rem;">Félicitations !</div>
+    <p style="color:var(--text2); max-width:500px; margin:0 auto 1rem;">Tu as terminé le cours JavaScript & DOM de la Coach Mbengue Academy. Tu maîtrises maintenant les fondamentaux pour construire des applications web interactives.</p>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--neon);">🇸🇳 Dakar · GoMyCode · Coach Mbengue</div>
+  </div>
+
+  <div class="lesson-nav">
+    <button class="btn-prev" onclick="goLesson(5)">← Précédent</button>
+    <button class="btn-next" onclick="goLesson(0)" style="background:var(--neon2);">↺ Recommencer</button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DEFAULT EDITOR CONTENTS ──
+const defaultEditorContents = {};
+
+// Store defaults on load
+document.querySelectorAll('textarea[id^="editor-"]').forEach(ta => {
+  defaultEditorContents[ta.id] = ta.value;
+});
+
+// ── LESSON NAVIGATION ──
+let currentLesson = 0;
+const totalLessons = 7;
+const completedLessons = new Set();
+
+function goLesson(idx) {
+  document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById(`lesson-${idx}`).classList.add('active');
+  document.getElementById(`nav-${idx}`).classList.add('active');
+
+  completedLessons.add(currentLesson);
+  document.getElementById(`nav-${currentLesson}`).classList.add('completed');
+
+  currentLesson = idx;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.round((completedLessons.size / totalLessons) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${completedLessons.size} / ${totalLessons} leçons`;
+}
+
+// ── EDITOR EXECUTION ──
+function runEditor(editorId, resultId, mode) {
+  const code = document.getElementById(editorId).value;
+  const frame = document.getElementById(resultId);
+  const doc = frame.contentDocument || frame.contentWindow.document;
+
+  let captured = [];
+  const consolePatch = `
+    const _log = console.log;
+    const _output = [];
+    console.log = function(...args) {
+      const line = args.map(a => {
+        if (typeof a === 'object' && a !== null) return JSON.stringify(a, null, 2);
+        return String(a);
+      }).join(' ');
+      _output.push(line);
+      window.parent.__logOutput = window.parent.__logOutput || [];
+      window.parent.__logOutput.push(line);
+    };
+  `;
+
+  if (mode === 'html') {
+    doc.open(); doc.write(code); doc.close();
+  } else {
+    const html = `<!DOCTYPE html><html><head><style>
+      body{font-family:'JetBrains Mono',monospace;font-size:0.82rem;padding:12px;background:#fff;color:#333;line-height:1.6;}
+      .line{padding:2px 0;border-bottom:1px solid #f0f0f0;}
+      .line:last-child{border:none;}
+      .err{color:#ff5f57;}
+    </style></head><body><div id="out"></div>
+    <script>
+      ${consolePatch}
+      try {
+        ${code}
+      } catch(e) {
+        _output.push('❌ Erreur: ' + e.message);
+      }
+      const out = document.getElementById('out');
+      _output.forEach(line => {
+        const d = document.createElement('div');
+        d.className = 'line' + (line.startsWith('❌') ? ' err' : '');
+        d.textContent = '› ' + line;
+        out.appendChild(d);
+      });
+    <\/script></body></html>`;
+    doc.open(); doc.write(html); doc.close();
+  }
+}
+
+function resetEditor(editorId, idx) {
+  document.getElementById(editorId).value = defaultEditorContents[editorId] || '';
+  showToast('Code réinitialisé');
+}
+
+// ── EXERCISE EXECUTION ──
+function runExo(codeId, resultId, isHtml) {
+  const code = document.getElementById(codeId).value;
+
+  if (isHtml) {
+    const iframeId = codeId.replace('code', 'iframe');
+    const resultDiv = document.getElementById(resultId);
+    const iframe = document.getElementById(iframeId);
+    resultDiv.style.display = 'block';
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open(); doc.write(code); doc.close();
+    return;
+  }
+
+  const resultDiv = document.getElementById(resultId);
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = '';
+
+  try {
+    const logs = [];
+    const origLog = console.log;
+    console.log = (...args) => {
+      logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' '));
+    };
+    eval(code);
+    console.log = origLog;
+    resultDiv.innerHTML = logs.map(l => `<div>› ${l}</div>`).join('');
+    if (logs.length === 0) resultDiv.innerHTML = '<div style="color:var(--text2)">Code exécuté (aucun console.log)</div>';
+  } catch(e) {
+    resultDiv.innerHTML = `<div style="color:var(--accent)">❌ ${e.message}</div>`;
+  }
+}
+
+// ── SOLUTION TOGGLE ──
+function toggleSolution(id) {
+  const box = document.getElementById(id);
+  box.classList.toggle('open');
+}
+
+// ── COPY CODE ──
+function copyCode(btn) {
+  const codeBlock = btn.closest('.code-block').querySelector('.code-content');
+  const text = codeBlock.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copié !';
+    setTimeout(() => btn.textContent = 'Copier', 2000);
+  });
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    const active = document.querySelector('.lesson.active');
+    const runBtn = active.querySelector('.run-btn');
+    if (runBtn) runBtn.click();
+  }
+});
+
+// ── QUIZ LOGIC ──
+function answerQuiz(el, correct, feedback, feedbackWrong) {
+  const opts = el.closest('.quiz-options').querySelectorAll('.quiz-option');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = el.closest('.quiz-card').querySelector('.quiz-feedback');
+
+  if (correct) {
+    el.classList.add('correct');
+    fb.textContent = '✅ ' + feedback;
+    fb.className = 'quiz-feedback show correct';
+  } else {
+    el.classList.add('wrong');
+    fb.textContent = '❌ ' + feedbackWrong;
+    fb.className = 'quiz-feedback show wrong';
+    // Highlight correct
+    opts.forEach(o => { if(o.dataset.correct) o.classList.add('correct'); });
+  }
+}
+</script>
+</body>
+</html>
